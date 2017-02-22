@@ -8,4 +8,3 @@ phi_2 = (x - x1)/(x2 - x1);
 
 y = phi_1*y1 + phi_2*y2;
 end
-
