@@ -1,4 +1,4 @@
-function y = Quadratic_shape(x, x1, x2, x3, y1, y2, y3)
+function y = quadratic_shape(x, x1, x2, x3, y1, y2, y3)
 %QUADRATIC_SHAPE The quadratic shape function for FEA.
 %	Creates three local variables- phi1, ph2, and phi3- that represent the shape
 %	functions usedin the Galerkin method of approximation.
