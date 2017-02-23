@@ -8,7 +8,7 @@ h_e
 type_e
 end
 
-properties (dependent)
+properties (Dependent)
 K_e
 end
 
