@@ -14,7 +14,11 @@ end
 
 function element = Element(type, a, c, h)
 %ELEMENT The constructor for the element class
-type_e.element = type;
+ if type == 1 || type == 2 
+  type_e.element = type;
+ else
+  error('Type must be a 1 or 2')
+ end
 a_e.element = a;
 c_e.element = c;
 h_e.element = h;
