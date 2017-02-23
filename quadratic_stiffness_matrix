@@ -1,0 +1,6 @@
+function K_e = quadratic_stiffness_matrix(a_e, c_e, h_e)
+%QUADRATIC_STIFFNESS_MATRIX Generates an elemental coefficient matrix, K_e, for a quadratic shape function
+ 
+ K_e = a_e/(3*h_e)*.[7 -8 1; -8 16 -8; 1 -8 7] + c_e*h_e/30*.[4 2 -1; 2 16 2; -1 2 4];
+
+end
