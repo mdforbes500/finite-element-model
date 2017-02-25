@@ -1,0 +1,6 @@
+I have read the text and found that P229 figure 4.41 cannot be used in this project, as I can solve it, but you need to put different
+part of the elemental stiffness matrix into different part of the global matrix. Spending some time, it can be solved though, 
+this would make the code extremly complicated as the elemental matrix generating and assebmling code should be revised thoroughly, 
+adding the function of devide the elemental matrix and locate them into the rightplace of the global matrix,
+I'm not sure if your problems need such a complicated process, so I decided to change the problem to the figure 4.38 in P229, 
+just for notice here
