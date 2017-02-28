@@ -44,7 +44,7 @@ N = 10; %number of elements
 %This process is independent of partitions, as all elements of the mesh
 %must be included to approximate solution.
 
-%K = assembler(K_e);
+K = assembler(element1.type_e,K_e);
 
 % Apply boundary conditions from the problem statement.
 %Q = [];
