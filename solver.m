@@ -1,4 +1,4 @@
-function U = solver(Q, F, K)
+function U = solver(Q, F, K, N)
 %SOLVER Solves the matrix equation
 % Adds boundary condition vector, Q,to force vector, F, and performs matrix multiplication on it.
 switch element1.type_e
