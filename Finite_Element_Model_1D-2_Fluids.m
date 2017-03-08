@@ -22,12 +22,24 @@ N = 10; %number of elements
     a = 1;
     c = 1;
     h = 1;
-    type = 1; %1 for linear, 2 for quadratic
+    type = 2; %1 for linear, 2 for quadratic
     %Construct sample element for each partition
     element1 = Element(type, a, c, h);
     % Fill partition matrix with partition's sample element
-    for i = 1:N
+    for i = 1:N/2
         elements(i) = element1;
+    end
+    
+    %Partition 2
+    a = 1;
+    c = 1;
+    h = 1;
+    type = 2; %1 for linear, 2 for quadratic
+    %Construct sample element for each partition
+    element2 = Element(type, a, c, h);
+    % Fill partition matrix with partition's sample element
+    for i = N/2+1:N
+        elements(i) = element2;
     end
     
 % Build elemental stiffness matrices for all elements, and store it in a
@@ -37,7 +49,7 @@ N = 10; %number of elements
     %Partition 1
     K_e = cell(1,N);
     for i = 1:N
-        K_e{i} = stiffness_matrix(elements(i));
+        K_e{i} = stiffness_matrix(elements(i))
     end
 
 % Build global stiffness matrix from elemental stiffness matrices.
