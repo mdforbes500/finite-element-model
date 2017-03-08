@@ -8,12 +8,13 @@ close all
 % Script: 1D Finite Element Model
 
 % Define domain
+RES = 999;
 xA = -0.5; %global starting value
 xB = 0.5; %global ending value
-omega = linspace(xA, xB);
+omega = xA: 1/RES: xB;
 length = xB - xA;
 
-pressure_diff = 50*10^6; %Pa
+pressure_diff = 50*10^-3; %Pa
 
 %Discretize domain
 N = 1; %number of elements
@@ -56,7 +57,7 @@ Q(2*N+1) = -pressure_diff/length;
 % Elemental force vector 
 F_e = cell(1,2*N+1);
 for i = 1:2*N+1
-    F_e{i} = pressure_diff*h/6*.[1;4;1];
+    F_e{i} = pressure_diff*h/6.*[1;4;1];
 end
 
 %Assembling the global force vector
@@ -66,14 +67,34 @@ F(2) = F_e{1}(2);
 F(2*N) = F_e{N}(2);
 F(2*N+1) = F_e{N}(3);
 for i = 3:2*N-1
-    F(i) = F_e{i-2}(i)+F_e{i-1}(i-2);
+    for e = 2:N
+        F(i) = F_e{e-1}(3)+F_e{e-1}(1);
+    end
 end
 
 % Solve for unknowns
-U = solver(Q, F, K);
+U = solver(element1, Q, F, K, N);
 
 % Post-processing - change answer into relevant quatities.
+x_e = zeros(1, 2*N+1);
+for i = 2:2*N+1
+    x_e(i) = x_e(i-1)+h/2;
+end
+
+for i = 1:RES+1
+    if N == 1
+        u(i) = quadratic_shape(omega(i),x_e(1),x_e(2), x_e(3), U(1), U(2), U(3));
+    else
+        for j = 2:N
+            u(i) = quadratic_shape(omega(i),x_e(j-1),x_e(j), x_e(j+1),U(j-1), U(j), U(j+1));
+        end
+    end
+end
 
     %Plotting data
     figure
-    plot(X, U, '-ob')
+    hold on
+    plot(0.5, omega, '-b', 'LineWidth', 1.0)
+    plot(-0.5, omega, '-b', 'LineWidth', 1.0)
+    plot(u, omega, '-b')
+    hold off
