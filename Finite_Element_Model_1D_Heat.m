@@ -17,16 +17,7 @@ length = xB - xA;
 A = 1 %meteres squared
 p = 4 %meters
 beta = 10 % Watts/(meter squared - K)
-
-
-vol_frac1 = (length - omega)/length;
-vol_frac2 = 1 - vol_frac1;
-steps = zeros(N, 1);
-k = zeros(N,1);
-for i = 1:N
-    steps = length/N*(i-1) + length/(2*N);
-    k(i) = 
-end
+k = 50.2*length/(length-A)*(1/omega); %conductance as a function along the length of the wall
 
 
 %Discretize domain
@@ -34,7 +25,7 @@ N = 5; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
     
-    %Partition  
+    %Partition 1 - Same material throughout
     a = k*A;
     c = A*p*beta;
     h = length/N;
