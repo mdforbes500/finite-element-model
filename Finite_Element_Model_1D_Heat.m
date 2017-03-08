@@ -9,19 +9,35 @@ close all
 
 % Define domain
 xA = 0; %global starting value
-xB = 1; %global ending value
+xB = 1; %meter %global ending value
 omega = linspace(xA, xB);
 length = xB - xA;
 
+% Parameters
+A = 1 %meteres squared
+p = 4 %meters
+beta = 10 % Watts/(meter squared - K)
+
+
+vol_frac1 = (length - omega)/length;
+vol_frac2 = 1 - vol_frac1;
+steps = zeros(N, 1);
+k = zeros(N,1);
+for i = 1:N
+    steps = length/N*(i-1) + length/(2*N);
+    k(i) = 
+end
+
+
 %Discretize domain
-N = 10; %number of elements
+N = 5; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
     
-    %Partition 1
-    a = 1;
-    c = 1;
-    h = 1;
+    %Partition  
+    a = k*A;
+    c = A*p*beta;
+    h = length/N;
     type = 1; %1 for linear, 2 for quadratic
     %Construct sample element for each partition
     element1 = Element(type, a, c, h);
