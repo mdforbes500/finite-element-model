@@ -8,39 +8,39 @@ close all
 % Script: 1D Finite Element Model
 
 % Define domain
+RES = 999;
 xA = 0; %global starting value
 xB = 1; %meter %global ending value
-omega = linspace(xA, xB);
+omega = xA: 1/RES: xB;
 length = xB - xA;
 
 % Parameters
-A = 1 %meteres squared
-p = 4 %meters
-beta = 10 % Watts/(meter squared - K)
-k = 50.2*length/(length-A)*(1/omega); %conductance as a function along the length of the wall
+A = 1; %meteres squared
+p = 4; %meters
+beta = 10; % Watts/(meter squared - K)
+k = 200*omega+50; %conductance as a function along the length of the wall
 T_inf = 60+273.15 %Kelvins
 
 %Discretize domain
-N = 5; %number of elements
+N = 3; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
-    
-    k_avg = zeros(1,N);
-    x_node = zeros(1,N+1);
-    for i = 2:N+1
-        if i-1 ~= 0
-            x_node(i-1) = (x_node(i) -x_node(i-1))/2;
-            k_avg(i-1) = k(x_node(i-1));
-        else
-            x_node(1) = 0;
-            k_avg(1) = k(1);
-        end
+    h = length/N;
+    x_nodes = zeros(1,N+1);
+    for i=2:N+1
+        x_nodes(i) = x_nodes(i-1)+ h;
     end
     
+    %Midpoints for each element
+    for i = 2:N+1
+        x_mid(i) = x_nodes(i-1) + h/2;
+    end
+    
+    k_avg = 200*x_mid+50; %vector
+    
     %Partition 1 - Same material throughout
-    a = k_avg*A;
+    a = k_avg*A; %vector
     c = A*p*beta;
-    h = length/N;
     type = 1; %1 for linear, 2 for quadratic
     
     %Construct sample element for each partition
