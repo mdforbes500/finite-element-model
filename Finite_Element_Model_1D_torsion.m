@@ -1,4 +1,4 @@
-% Created by Malcolm D. Forbes
+% Written by Zhihao Liao
 % Spring 2017
 
 clc
@@ -56,19 +56,24 @@ K = assembler(element1.type_e,K_e);
 %input the torsion
 T=10;
 
+% Solve for unknowns
 switch type
     case 1 
-
-    case 2 
-        h=h/2;N=2*N;
-end    
-% Apply boundary conditions from the problem statement.
+        % Apply boundary conditions from the problem statement.
         Q = zeros(N+1,1);Q(N+1)=T;
-        F = zeros(N+1,1);
-% Solve for unknowns        
+        F = zeros(N+1,1); 
+        
         U = zeros(N+1,1); 
         U(2:N+1) = K(2:N+1,2:N+1)\(F(2:N+1) + Q(2:N+1)); 
+    case 2 
+        h=h/2;
+        % Apply boundary conditions from the problem statement.
+        Q = zeros(2*N+1,1);Q(2*N+1)=T;
+        F = zeros(2*N+1,1);
 
+        U = zeros(2*N+1,1); 
+        U(2:2*N) = K(2:2*N,2:2*N)\(F(2:2*N) + Q(2:2*N)); 
+end 
 % Post-processing - change answer into relevant quatities.
 
     %Plotting data
