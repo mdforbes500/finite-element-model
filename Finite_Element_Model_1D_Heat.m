@@ -19,6 +19,7 @@ A = 1; %meteres squared
 p = 4; %meters
 beta = 10; % Watts/(meter squared - K)
 k = 200*omega+50; %conductance as a function along the length of the wall
+%k = 200./(1+exp(-1.*omega));
 T_inf = 60+273.15; %Kelvins
 
 %Discretize domain
@@ -40,8 +41,8 @@ N = 3; %number of elements
     
     %Partition 1 - Same material throughout
     a = k_avg*A; %vector
-    c = A*p*beta;
-    %c = 0;
+    %c = A*p*beta;
+    c = 0;
     type = 1; %1 for linear, 2 for quadratic
     
     %Construct sample element for each partition
@@ -68,18 +69,18 @@ K = assembler(elements(1).type_e,K_e);
 
 % Apply boundary conditions from the problem statement.
 
-Q = zeros(1,N+1);
-U = zeros(1,N+1);
+Q = zeros(N+1,1);
+U = zeros(N+1,1);
 U(1) = 250+273.15; %Kelvins
         
 Q(2) = a(2)/h*U(1);
-Q(1,N+1) = beta*A*T_inf; %Watts
+Q(N+1,1) = beta*A*T_inf; %Watts
        
 % Solve for unknowns
 switch elements(i).type_e
     case 1
-        K(N+1,N+1) = 10 + K(N+1,N+1);
-        U(2:N) = (Q(2:N))/K(2:N, 2:N);
+        K(N+1,N+1) = K(N+1,N+1)+beta*A;
+        U(2:N+1) = inv(K(2:N+1, 2:N+1))*Q(2:N+1);
     case 2
         U = zeros(1,2*N+1);
         U(2:2*N) = (Q(2:2*N))\K(2:2*N, 2:2*N);
