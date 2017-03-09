@@ -19,7 +19,7 @@ A = 1; %meteres squared
 p = 4; %meters
 beta = 10; % Watts/(meter squared - K)
 k = 200*omega+50; %conductance as a function along the length of the wall
-T_inf = 60+273.15 %Kelvins
+T_inf = 60+273.15; %Kelvins
 
 %Discretize domain
 N = 3; %number of elements
@@ -71,24 +71,30 @@ Q = zeros(1,N+1);
 Q(N+1) = -beta*A*T_inf;
 
 % Solve for unknowns
-U = solver_heat(Q, F, K);
-
-% Post-processing - change answer into relevant quatities.
-x_e = zeros(1, 2*N+1);
-for i = 2:2*N+1
-    x_e(i) = x_e(i-1)+h/2;
+switch elements(i).type_e
+    case 1
+        U = zeros(1,N+1);
+        U(1) = 250; %Kelvins
+        K(N+1,N+1) = 10 + K(N+1,N+1);
+        Q(N+1, 1) = 600; %Watts
+        U(2:N) = (Q(2:N))/K(2:N, 2:N);
+    case 2
+        U = zeros(1,2*N+1);
+        U(2:2*N) = (Q(2:2*N))/K(2:2*N, 2:2*N);
 end
 
+% Post-processing - change answer into relevant quatities.
 for i = 1:RES+1
     if N == 1
-        u(i) = quadratic_shape(omega(i),x_e(1),x_e(2), x_e(3), U(1), U(2), U(3));
+        u(i) = Linear_shape(omega(i), x_nodes(1), x_nodes(2), U(1), U(2));
     else
         for j = 2:N
-            u(i) = quadratic_shape(omega(i),x_e(j-1),x_e(j), x_e(j+1),U(j-1), U(j), U(j+1));
+            u(i) = Linear_shape(omega(i),x_nodes(j-1),x_nodes(j),U(j-1), U(j));
         end
     end
+end
 
     %Plotting data
     figure
-    plot(X, U, '-ob')
+    plot(omega, u, '-b')
 %END SCRIPT
