@@ -41,12 +41,13 @@ N = 3; %number of elements
     %Partition 1 - Same material throughout
     a = k_avg*A; %vector
     c = A*p*beta;
+    %c = 0;
     type = 1; %1 for linear, 2 for quadratic
     
     %Construct sample element for each partition
     % Fill partition matrix with partition's sample element
     for i = 1:N
-        elements(i) = Element(type, a(i), c, h);;
+        elements(i) = Element(type, a(i+1), c, h);
     end
     
 % Build elemental stiffness matrices for all elements, and store it in a
@@ -68,19 +69,20 @@ K = assembler(elements(1).type_e,K_e);
 % Apply boundary conditions from the problem statement.
 
 Q = zeros(1,N+1);
-Q(N+1) = -beta*A*T_inf;
-
+U = zeros(1,N+1);
+U(1) = 250+273.15; %Kelvins
+        
+Q(2) = a(2)/h*U(1);
+Q(1,N+1) = beta*A*T_inf; %Watts
+       
 % Solve for unknowns
 switch elements(i).type_e
     case 1
-        U = zeros(1,N+1);
-        U(1) = 250; %Kelvins
         K(N+1,N+1) = 10 + K(N+1,N+1);
-        Q(N+1, 1) = 600; %Watts
         U(2:N) = (Q(2:N))/K(2:N, 2:N);
     case 2
         U = zeros(1,2*N+1);
-        U(2:2*N) = (Q(2:2*N))/K(2:2*N, 2:2*N);
+        U(2:2*N) = (Q(2:2*N))\K(2:2*N, 2:2*N);
 end
 
 % Post-processing - change answer into relevant quatities.
