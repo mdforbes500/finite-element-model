@@ -74,6 +74,19 @@ Q(N+1) = -beta*A*T_inf;
 U = solver_heat(Q, F, K);
 
 % Post-processing - change answer into relevant quatities.
+x_e = zeros(1, 2*N+1);
+for i = 2:2*N+1
+    x_e(i) = x_e(i-1)+h/2;
+end
+
+for i = 1:RES+1
+    if N == 1
+        u(i) = quadratic_shape(omega(i),x_e(1),x_e(2), x_e(3), U(1), U(2), U(3));
+    else
+        for j = 2:N
+            u(i) = quadratic_shape(omega(i),x_e(j-1),x_e(j), x_e(j+1),U(j-1), U(j), U(j+1));
+        end
+    end
 
     %Plotting data
     figure
