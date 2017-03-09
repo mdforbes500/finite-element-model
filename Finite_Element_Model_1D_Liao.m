@@ -16,7 +16,7 @@ length = xB - xA;
 
 
 %Discretize domain
-N = 10; %number of elements
+N = 1000; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
         
@@ -54,15 +54,30 @@ N = 10; %number of elements
 K = assembler(element1.type_e,K_e);
 
 
-% Apply boundary conditions from the problem statement.
+
 T=10;
-Q = zeros(N+1,1);Q(N+1)=T;
-F = zeros(N+1,1);
+
 % Solve for unknowns
-U= solver(Q, F, K,N,type);
+switch type
+    case 1 
+        % Apply boundary conditions from the problem statement.
+        Q = zeros(N+1,1);Q(N+1)=T;
+        F = zeros(N+1,1); 
+        
+        U = zeros(N+1,1); 
+        U(2:N+1) = K(2:N+1,2:N+1)\(F(2:N+1) + Q(2:N+1)); 
+    case 2 
+        % Apply boundary conditions from the problem statement.
+        Q = zeros(2*N+1,1);Q(2*N+1)=T;
+        F = zeros(2*N+1,1);
+        h=h/2;
+        
+        U = zeros(2*N+1,1); 
+        U(2:2*N+1) = K(2:2*N+1,2:2*N+1)\(F(2:2*N+1) + Q(2:2*N+1)); 
+end 
 % Post-processing - change answer into relevant quatities.
 
     %Plotting data
     figure
-    X=0:h:N;
-    plot(X, U, '-ob')
+    X=0:h:length;
+    plot(X, U)
