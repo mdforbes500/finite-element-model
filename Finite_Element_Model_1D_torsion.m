@@ -16,7 +16,7 @@ length = xB - xA;
 
 
 %Discretize domain
-N = 10; %number of elements
+N = 1000; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
         
