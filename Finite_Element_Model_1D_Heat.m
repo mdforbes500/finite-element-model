@@ -28,7 +28,7 @@ N = 5; %number of elements
     k_avg = zeros(1,N);
     x_node = zeros(1,N+1);
     for i = 2:N+1
-        if i-1 != 0
+        if i-1 ~= 0
             x_node(i-1) = (x_node(i) -x_node(i-1))/2;
             k_avg(i-1) = k(x_node(i-1));
         else
