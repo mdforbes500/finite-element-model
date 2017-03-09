@@ -12,8 +12,10 @@ switch type
     
     case 2 %for quadratic case
      K=zeros(2*length(K_e)+1,2*length(K_e)+1);
-        for i=1:2:(length(K_e)-1)
+     e = 1;
+        for i=1:2:2*length(K_e)-1
             %assemble elemental matrix
-            K(i:i+2,i:i+2)=K(i:i+2,i:i+2)+K_e{i};
+            K(i:i+2,i:i+2)=K(i:i+2,i:i+2)+K_e{e};
+            e = e+1;
         end  
 end
