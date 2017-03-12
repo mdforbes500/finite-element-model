@@ -1,4 +1,4 @@
-% Created by Malcolm D. Forbes
+% Created by Malcolm D. Forbes/some Fenagling by James Triebwasser
 % Spring 2017
 
 clc
@@ -23,7 +23,7 @@ k = 200*omega+50; %conductance as a function along the length of the wall
 T_inf = 60+273.15; %Kelvins
 
 %Discretize domain
-N = 3; %number of elements
+N = 100; %number of elements
     % Define Elemental properties for each partition
     %If there are extra partitions, create new elemental properties.
     h = length/N;
@@ -34,8 +34,11 @@ N = 3; %number of elements
     
     T = zeros(N+1,1);
     for i =1:N+1
-        T(i) = 40*(x_nodes(i)^2)-90*(x_nodes(i))+ 250 + 273; 
+       T(i) = 40*(x_nodes(i)^2)-90*(x_nodes(i))+ 523; 
         %quadratic equation generated using three points
+    
+        %T(i) = -50*(x_nodes(i)) + 523;
+        %linear temperature distribution
     end    
     
     %Midpoints for each element
@@ -48,8 +51,8 @@ N = 3; %number of elements
     
     %Partition 1 - Same material throughout
     a = k_avg*A; %vector
-    %c = A*p*beta;
-    c = 0;
+    c = A*p*beta;
+    %c = 0;
     type = 1; %1 for linear, 2 for quadratic
     
     %Construct sample element for each partition
@@ -77,34 +80,63 @@ K = assembler(elements(1).type_e,K_e);
 % Apply boundary conditions from the problem statement.
 
 Q = zeros(N+1,1);
-%T = zeros(N+1,1);
-%T(1) = 250+273.15; %Kelvins
-        
-%Q(N+1,1) = beta*A*T_inf + Q(N+1,1); %Watts
-       
+f = ((p*beta*T_inf*h)/2);
+one = zeros(N+1,1);
+one(1) = 1;
+one(N+1) = 1;
+for i = 2:N
+    one(i) = 2;
+end
+
+heat_gen = f * one;
+
+
+
 % Solve for unknowns
 switch elements(i).type_e
     case 1
-        Q = K*T;
+        Q = (K*T)- heat_gen;
         %K(N+1,N+1) = K(N+1,N+1)+beta*A;
         %U(2:N+1) = inv(K(2:N+1, 2:N+1))*Q(2:N+1);
-   % case 2
+    case 2
    %     U = zeros(1,2*N+1);
    %     U(2:2*N) = (Q(2:2*N))\K(2:2*N, 2:2*N);
+        Q = K*T- heat_gen;
 end
 
+
+
 % Post-processing - change answer into relevant quatities.
+%for i = 1:RES+1
+%    if N == 1
+%        u(i) = Linear_shape(omega(i), x_nodes(1), x_nodes(2), Q(1), Q(2));
+%    else
+%        for j = 2:N
+%            u(i) = Linear_shape(omega(i),x_nodes(j-1),x_nodes(j),Q(j-1), Q(j));
+%        end
+%    end
+%end
+
 for i = 1:RES+1
     if N == 1
-        u(i) = Linear_shape(omega(i), x_nodes(1), x_nodes(2), Q(1), Q(2));
+        u(i) = quadratic_shape(omega(i),x_nodes(1),x_nodes(2), x_nodes(3), Q(1), Q(2), Q(3));
     else
         for j = 2:N
-            u(i) = Linear_shape(omega(i),x_nodes(j-1),x_nodes(j),Q(j-1), Q(j));
+            u(i) = quadratic_shape(omega(i),x_nodes(j-1),x_nodes(j), x_nodes(j+1),Q(j-1), Q(j), Q(j+1));
         end
     end
 end
 
+
     %Plotting data
     figure
-    plot(omega, u, '-b')
+    plot(Q, '-ob')
+    xlabel('Nodes')
+    ylabel('Net Heat (W)')
+    %title('Net Heat for a Quadratic Temperature Distribution')
+    
+    title('Net Heat for N=3 Elements')
+    
+    %xticks([1,2,3,4])
+    %xticklabels({'1','2','3','4'})
 %END SCRIPT
