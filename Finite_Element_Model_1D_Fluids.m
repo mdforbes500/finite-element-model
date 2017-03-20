@@ -9,12 +9,13 @@ close all
 
 % Define domain
 RES = 999;
-xA = -0.5; %global starting value
-xB = 0.5; %global ending value
+xA = 0; %global starting value
+xB = 1; %global ending value
 omega = xA: 1/RES: xB;
-length = xB - xA;
+length = (xB - xA);
 
-pressure_diff = 50*10^-3; %Pa
+f_0 = 50; %Pa
+mu = 1.12;
 
 %Discretize domain
 N = 1; %number of elements
@@ -22,7 +23,7 @@ N = 1; %number of elements
     %If there are extra partitions, create new elemental properties.
     
     %Partition 1
-    a = 1.12*10^-3;
+    a = mu;
     c = 0;
     h = length/N;
     type = 2; %1 for linear, 2 for quadratic
@@ -50,14 +51,14 @@ N = 1; %number of elements
 K = assembler(element1.type_e,K_e);
 
 % Apply boundary conditions from the problem statement.
-Q = zeros(1,2*N+1);
-Q(1) = pressure_diff/length;
-Q(2*N+1) = -pressure_diff/length;
+Q = zeros(2*N+1,1);
+Q(1) = f_0/2;
+Q(2*N+1) = -f_0/2;
 
 % Elemental force vector 
-F_e = cell(1,2*N+1);
+F_e = cell(2*N+1,1);
 for i = 1:2*N+1
-    F_e{i} = pressure_diff*h/6.*[1;4;1];
+    F_e{i} = f_0*h/6.*[1;4;1];
 end
 
 %Assembling the global force vector
@@ -81,7 +82,7 @@ for i = 2:2*N+1
     x_e(i) = x_e(i-1)+h/2;
 end
 
-for i = 1:RES+1
+for i = 1:1000
     if N == 1
         u(i) = quadratic_shape(omega(i),x_e(1),x_e(2), x_e(3), U(1), U(2), U(3));
     else
@@ -92,9 +93,15 @@ for i = 1:RES+1
 end
 
     %Plotting data
+    func = (f_0*(length/2)^2)/(2*mu)*(1-((omega-0.5).^2/(length/2)^2));
+    
     figure
     hold on
-    plot(0.5, omega, '-b', 'LineWidth', 1.0)
-    plot(-0.5, omega, '-b', 'LineWidth', 1.0)
-    plot(u, omega, '-b')
+    title('Velocity profile of a single fluid')
+    xlabel('y')
+    ylabel('u(y)')
+    %plot(0, omega, '-b', 'LineWidth', 1.0)
+    %plot(1, omega, '-b', 'LineWidth', 1.0)
+    plot(omega, func, '-r')
+    plot( omega, u, '-b')
     hold off
