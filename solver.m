@@ -4,8 +4,9 @@ function U = solver(element, Q, F, K, N)
 switch element.type_e
     case 1
         U = zeros(1,N+1);
-        U(2:N) = (F(2:N) + Q(2:N))\K(2:N, 2:N);
+        U(2:N) = K(2:N, 2:N)\(F(2:N) + Q(2:N));
     case 2
-        U = zeros(1,2*N+1);
-        U(2:2*N) = (F(2:2*N) + Q(2:2*N))\K(2:2*N, 2:2*N);
+        U = zeros(2*N+1,1);
+        U(2:N) = K(2:N, 2:N)\(F(2:N) + Q(2:N));
+        U(N:2*N) = K(N:2*N, N:2*N)\(F(N:2*N) + Q(N:2*N));
 end
